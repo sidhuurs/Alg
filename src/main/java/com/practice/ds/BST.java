@@ -84,7 +84,6 @@ public class BST {
             }
             node = stack.pop();
             list.add(node.val);
-            if(node.right!=null)
             node = node.right;
         }
         return list;
