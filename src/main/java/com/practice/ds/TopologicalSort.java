@@ -23,7 +23,7 @@ public class TopologicalSort {
         graph.addEdge("C", "E");
         graph.addEdge("E", "B");
         graph.addEdge("E", "D");
-        graph.addEdge("E", "A");
+
         List<String> topSort = toplogicalSort(graph);
 
         if(topSort.equals(Arrays.asList("A", "C", "E", "B", "D")))
