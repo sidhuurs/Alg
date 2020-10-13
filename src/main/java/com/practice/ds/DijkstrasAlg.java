@@ -4,25 +4,7 @@ import java.util.*;
 
 public class DijkstrasAlg {
 
-    static class DistNode{
-        String prevVertex;
-        int distance;
-        DistNode(){}
-        DistNode(String prevVertex, int distance){
-            this.prevVertex = prevVertex;
-            this.distance = distance;
-        }
-    }
-    
-    static class HeapNode{
-        String vertex;
-        int distance;
-        HeapNode(){}
-        HeapNode(String vertex, int distance){
-            this.vertex = vertex;
-            this.distance = distance;
-        }
-    }
+
     public static void main(String [] args)
     {
         WeightedGraph graph = new WeightedGraph(true);
