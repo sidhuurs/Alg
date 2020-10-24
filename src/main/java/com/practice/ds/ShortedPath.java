@@ -34,67 +34,88 @@ public class ShortedPath {
         graph.addEdge("E", "B");
         graph.addEdge("E", "D");
 
-        String [] shortestPath = shortestPathBFS(graph, "A", "D");
-        System.out.println("Shortest Path from A to D is ==> "+ Arrays.toString(shortestPath));
+        List<String> path = shortestPathBFS(graph, "A", "D");
+        System.out.println("Shortest Path from A to D is ==> "+ path);
 
-        //List<String> pathDFS = shortestPathDFS(graph, "A", "D");
-      //  System.out.println("Shortest Path from A to D (DFS) is ==> "+ pathDFS);
+            dfsRec(graph, "A", "D", new ArrayList<>());
+          System.out.println("Shortest Path from A to D (DFS Rec) is ==> "+ result);
+
+
+
+
     }
 
-  static String [] shortestPathBFS(Graph graph, String source, String destination)
+  static List<String> shortestPathBFS(Graph graph, String source, String destination)
     {
         String [] path = null;
-        Map<String, Distance> distMap = new HashMap<>();
-        fillDistanceTable(graph, source, distMap);
-        if(distMap.containsKey(destination)){
-            int len = distMap.get(destination).dist+1;
-            path = new String [len];
+        Map<String, String> preMap = new HashMap<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add(source); boolean found =false;
+        int level =0;
+        while(!queue.isEmpty() && !found){
+            int size = queue.size();
+            for(int i=0;i<size && !found;i++){
+                String node = queue.poll();
 
-            String temp = destination;
-            int index = len-1;
-            while(index>-1){
-                path[index--] = temp;
-                temp = distMap.get(temp).prevNode;
-            }
-        }
-        return path;
-    }
-
-
-   /*static List<String> shortestPathDFS(Graph graph, String source, String destination)
-    {
-
-
-        Set<String> visited = new HashSet<>();
-        List<String> list = null;
-        List<String> l = null;
-        Deque<String> queue = new ArrayDeque<>();
-
-        queue.push(source);
-
-        while (!queue.isEmpty()){
-            String s = queue.pop();
-            visited.add(s);
-
-            Set<String> links = graph.getAdjNodes(s);
-            if(links!=null){
-                if(links.contains(destination)){
-                    if(list==null || queue.size()<list.size())
-                    {
-                        list = copy(queue);
-                    }
-                } else {
-                    for (String n : links) {
-                        if (!visited.contains(n)) {
-                            queue.push(n);
+                Set<String> nodes = graph.getAdjNodes(node);
+                if(nodes!=null){
+                    for(String n : nodes){
+                        if(!preMap.containsKey(n)){
+                            preMap.put(n, node);
+                            if(n.equals(destination)){
+                                found = true;
+                                break;
+                            }
+                            queue.add(n);
                         }
                     }
                 }
             }
+            level++;
         }
+        System.out.println("level ="+level);
+        return backTrack(preMap, source, destination);
 
-        return list;
-    }*/
+
+    }
+
+
+   static List<String> backTrack(Map<String, String> prevMap, String source, String dest){
+       List<String> path = new ArrayList<>();
+       String n = dest;
+       while(!n.equals(source)){
+           path.add(n);
+           n = prevMap.get(n);
+       }
+       path.add(source);
+       Collections.reverse(path);
+       return path;
+   }
+
+
+    static List<String> result = null;
+    static void dfsRec(Graph graph, String source, String destination, List<String> path){
+        path.add(source);
+        if(result!=null && path.size()>=result.size()){
+            path.remove(path.size()-1);
+            return;
+        }
+       if(source.equals(destination)){
+           result = new ArrayList<>(path);
+           path.remove(path.size()-1);
+           return;
+       }
+
+       Set<String> neighbors = graph.getAdjNodes(source);
+       if(neighbors!=null){
+           for(String n : neighbors){
+                dfsRec(graph,n, destination, path);
+           }
+       }
+       path.remove(path.size()-1);
+    }
+
+
 
     static  List<String> copy(Deque<String> q)
     {
