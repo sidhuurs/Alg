@@ -21,8 +21,42 @@ public class PrimsAlg {
         WeightedGraph mst =  prims(graph, "A");
 
         System.out.println("minimum spanning tree  = "+mst.dfs("A"));
+
+        WeightedGraph mst2 =  prims2(graph, "A");
+
+        System.out.println("minimum spanning tree  = "+mst2.dfs("A"));
+
     }
 
+
+    private static  WeightedGraph prims2(WeightedGraph graph,  String s){
+        Map<String , String> prevMap = new HashMap<>();
+        Map<String, Integer> distMap = new HashMap<>();
+        PriorityQueue<String> queue = new PriorityQueue<>((s1,s2)-> distMap.get(s1)-distMap.get(s2));
+
+        queue.add(s);
+
+        while (!queue.isEmpty()){
+            String node = queue.remove();
+            List<Edge> edges = graph.getEdges(node);
+            if(edges!=null){
+                for(Edge edge : edges){
+                    if(!prevMap.containsKey(edge.destination) || edge.weight<distMap.get(edge.destination)){
+                        prevMap.put(edge.destination, edge.source);
+                        distMap.put(edge.destination, edge.weight);
+                        queue.add(edge.destination);
+                    }
+                }
+            }
+        }
+
+        //build mst
+        WeightedGraph mst = new WeightedGraph(true);
+        for(Map.Entry<String, String> entry : prevMap.entrySet()){
+            mst.addEdge(entry.getValue(),entry.getKey(),  distMap.get(entry.getKey()));
+        }
+        return  mst;
+    }
 
     public static WeightedGraph prims(WeightedGraph graph, String s){
         Map<String, DistNode> distMap = new HashMap<>();

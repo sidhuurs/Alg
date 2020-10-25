@@ -20,6 +20,11 @@ class Edge implements Comparable<Edge>{
     public int compareTo(Edge e2) {
         return this.weight-e2.weight;
     }
+
+    @Override
+    public String toString(){
+        return this.source +" -->" + this.destination;
+    }
 }
 class DistNode{
     String prevVertex;

@@ -53,5 +53,36 @@ public class UnionFind {
 
 
 
+    String parent2(String u)
+    {
+        String p = parentMap.get(u);
+        if(p.equals(u)){
+            return p;
+        }
+        else{
+            p = parent2(p);
+            parentMap.put(u, p);
+        }
+        return p;
+    }
+
+    void union2(String u, String v){
+        String pu = parentMap.get(u);
+        String pv = parentMap.get(v);
+
+        if(pu.equals(pv)){
+            int su = sizeMap.get(pu);
+            int sv = sizeMap.get(pv);
+
+            if(su<sv){
+                parentMap.put(pu,pv);
+                sizeMap.put(pv, sv+su);
+            }else{
+                parentMap.put(pv,pu);
+                sizeMap.put(pu, su+sv);
+            }
+        }
+    }
+
 
 }

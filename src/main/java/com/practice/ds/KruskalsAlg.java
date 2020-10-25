@@ -1,7 +1,9 @@
 package com.practice.ds;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * @author Sudarshan
@@ -10,7 +12,7 @@ public class KruskalsAlg {
 
     public static  void main(String [] args){
 
-        WeightedGraph graph = new WeightedGraph(false);
+        WeightedGraph graph = new WeightedGraph(true);
         graph.addEdge("A", "B", 5);
         graph.addEdge("A", "C", 2);
         graph.addEdge("B", "D", 8);
@@ -20,27 +22,50 @@ public class KruskalsAlg {
 
         WeightedGraph mst =  kruskals(graph);
 
-        System.out.println("minimum spanning tree  = "+mst.dfs("A"));
+        System.out.println("minimum spanning tree  = "+mst.edges);
+
+
     }
+
 
     private static WeightedGraph kruskals(WeightedGraph graph) {
-        WeightedGraph mst = new WeightedGraph(false);
-        int  size = (graph.adjMap.size() -1)*2;
-        PriorityQueue<Edge> queue = new PriorityQueue<>();
-        for(Edge edge : graph.edges)
-            queue.add(edge);
+          PriorityQueue<Edge> queue = new PriorityQueue<>();
+          WeightedGraph mst = new WeightedGraph(true);
+          int size = graph.adjMap.keySet().size()-1;
+          for(Edge edge : graph.edges)
+              queue.add(edge);
 
-        while(!queue.isEmpty() && mst.edges.size()<size){
-            Edge edge = queue.remove();
-            mst.addEdge(edge);
-            if(mst.hasCycle(edge.source, null, new HashSet<String>())){
-                mst.removeEdge(edge);
+          while(!queue.isEmpty() && mst.edges.size()<size){
+              Edge e = queue.remove();
+
+              mst.addEdge(e);
+              if(hasCycle(mst,e.source, null, new HashSet<>()))
+                  mst.removeEdge(e);
+
+          }
+          return mst;
+
+    }
+
+    static boolean hasCycle(WeightedGraph graph, String u, String parent, Set<String> visited){
+        visited.add(u);
+        List<Edge> edges = graph.getEdges(u);
+        if(edges!=null){
+            for(Edge edge : edges){
+                String v = edge.destination;
+
+                if(!visited.contains(v)){
+                    if(hasCycle(graph, v, u, visited))
+                        return true;
+                }
+                else if(parent!=null && !v.equals(parent)){
+                    return true;
+                }
             }
         }
-        if(mst.edges.size()<size){
-            System.out.println("no MST");
-        }
-
-        return mst;
+        return false;
     }
+
+
+
 }
